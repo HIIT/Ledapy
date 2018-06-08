@@ -1,0 +1,5 @@
+Requires
+
+numpy
+scipy
+sympy
