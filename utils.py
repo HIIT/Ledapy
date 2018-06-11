@@ -158,13 +158,13 @@ def smooth(data, winwidth_in):
     if not len(data.shape) == 1:
         raise ValueError('data is not a vector. Shape: ' + str(data.shape))
     paddata = npa(np.hstack((data[0], data, data[-1])))  # pad to remove border errors
-    winwidth = np.floor(winwidth_in / 2) * 2  # force even winsize for odd window
-    window = norm.pdf(np.arange(0, winwidth + 1), winwidth / 2, winwidth / 8)
+    winwidth = int(np.floor(winwidth_in // 2) * 2)  # force even winsize for odd window
+    window = norm.pdf(np.arange(0, winwidth + 1), winwidth // 2, winwidth // 8)
     window = window / np.sum(window)  # normalize window
 
-    data_ext = np.hstack(((np.zeros(winwidth / 2) + 1) * paddata[0],
+    data_ext = np.hstack(((np.zeros(winwidth // 2) + 1) * paddata[0],
                           paddata,
-                          (np.zeros(winwidth / 2) + 1) * paddata[-1]))  # extend data to reduce convolution error at beginning and end
+                          (np.zeros(winwidth // 2) + 1) * paddata[-1]))  # extend data to reduce convolution error at beginning and end
 
     sdata_ext = convolve(data_ext, window)  # convolute with window
     sdata = sdata_ext[winwidth + 1: -winwidth - 1]  # cut to data length

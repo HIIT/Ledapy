@@ -283,7 +283,7 @@ def bateman_gauss(time, onset, amp, tau1, tau2, sigma):
 
     if sigma > 0:
         sr = round(1 / np.mean(np.diff(time)))
-        winwidth2 = np.ceil(sr * sigma * 4)  # round half winwidth: 4 SD to each side
+        winwidth2 = int(np.ceil(sr * sigma * 4))  # round half winwidth: 4 SD to each side
         t = np.arange(1, (winwidth2 * 2 + 2))  # odd number (2*winwidth-half+1) + 2 because of numpy's arange implementation
         g = stats.norm.pdf(t, winwidth2 + 1, sigma * sr)
         g = g / np.max(g) * amp
@@ -329,7 +329,7 @@ def sdeco_interimpulsefit(driver, kernel, minL, maxL):
     else:  # no peaks (exept for pre-peak and may last peak) so data represents tonic only, so ise all data for tonic estimation
         iif_idx = np.flatnonzero(t > 0)
 
-    iif_idx = [x for x in iif_idx]
+    iif_idx = [x for x in iif_idx.astype(int)]
     iif_t = t[iif_idx]
     iif_data = driver[iif_idx]
 
