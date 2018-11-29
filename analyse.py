@@ -250,7 +250,7 @@ def bateman(time, onset, amp, tau1, tau2):
         raise ValueError('tau1 or tau2 < 0: ({:f}, {:f})'.format(tau1, tau2))
 
     if tau1 == tau2:
-        raise ValueError('tau1 == tau2 == %f'.format(tau1))
+        raise ValueError('tau1 == tau2 == {:f}'.format(tau1))
 
     conductance = np.zeros(time.shape)
     rang = np.flatnonzero(time > onset)
