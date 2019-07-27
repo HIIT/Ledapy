@@ -1,6 +1,6 @@
 # Ledapy
 
-Ledapy is an port of Ledalab (www.ledalab.de) for Python. It is a simplified port and does not provide a GUI. However, it is suitable for headless processing, or integration with [MIDAS](http://github.com/bwrc/midas/).
+Ledapy is a minimal port of Ledalab (www.ledalab.de) for Python. It runs in the command line and does not provide a GUI. However, it is suitable for integration with other packages, including [MIDAS](http://github.com/bwrc/midas/).
 
 ## Prerequisites
 
@@ -16,12 +16,15 @@ Optionally, if one wants to plot
 
 ## Usage
 
-There are some `.mat` files in the repository, provided so that Ledapy's results can be compared to Ledalab's (which can be done separately in Matlab).
+Ledapy is available on [PyPi](https://pypi.org). To install, run `pip3 install ledapy`.
+
+There are some `.mat` files in this repository, provided so that Ledapy's results can be compared to Ledalab's (which can be run separately in Matlab).
 
 A test run can be initated as follows
 
 ```
-cd ..  # assuming we start in Ledapy's directory
+git clone https://github.com/HIIT/Ledapy.git
+cd Ledapy
 python3
 ```
 
@@ -29,7 +32,7 @@ python3
 import ledapy
 import scipy.io as sio
 from numpy import array as npa
-filename = 'ledapy/EDA1_long_100Hz.mat'
+filename = 'EDA1_long_100Hz.mat'
 sampling_rate = 100
 matdata = sio.loadmat(filename)
 rawdata = npa(matdata['data']['conductance'][0][0][0], dtype='float64')
