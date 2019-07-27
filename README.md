@@ -37,7 +37,7 @@ sampling_rate = 100
 matdata = sio.loadmat(filename)
 rawdata = npa(matdata['data']['conductance'][0][0][0], dtype='float64')
 phasicdata = ledapy.runner.getResult(rawdata, 'phasicdata', sampling_rate, downsample=4, optimisation=2)
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as plt  # note: requires matplotlib, not installed by default
 plt.plot(phasicdata)
 plt.show()
 ```
