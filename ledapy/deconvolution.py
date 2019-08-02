@@ -62,17 +62,16 @@ def sdeconv_analysis(x, estim_tonic=1):
     """
     Original location: deconvolution/sdeconv_analysis.m
     """
-    newx = npa(x)
     # Check Limits
-    newx[0] = utils.withinlimits(newx[0], leda2.settings.tauMin, 10)
-    newx[1] = utils.withinlimits(newx[1], leda2.settings.tauMin, 20)
+    x[0] = utils.withinlimits(x[0], leda2.settings.tauMin, 10)
+    x[1] = utils.withinlimits(x[1], leda2.settings.tauMin, 20)
     
-    if newx[1] < newx[0]:  # tau1 < tau2
-        newx = newx[::-1]
-    if abs(newx[0] - newx[1]) < leda2.settings.tauMinDiff:
-        newx[1] = newx[1] + leda2.settings.tauMinDiff
+    if x[1] < x[0]:  # tau1 < tau2
+        x = x[::-1]
+    if abs(x[0] - x[1]) < leda2.settings.tauMinDiff:
+        x[1] = x[1] + leda2.settings.tauMinDiff
 
-    tau = npa(newx[0:2])
+    tau = npa(x[0:2])
 
     data = npa(leda2.analysis0.target.d)
     t = npa(leda2.analysis0.target.t)
@@ -91,7 +90,7 @@ def sdeconv_analysis(x, estim_tonic=1):
     bg = analyse.bateman_gauss(tb, 5, 1, 2, 40, .4)
     idx = np.argmax(bg)
 
-    prefix = bg[:idx + 2] / bg[idx + 2] * d[0]  # +10
+    prefix = bg[:idx + 1] / bg[idx + 1] * d[0]  # +10
     prefix = npa(prefix)
     prefix_idx = np.flatnonzero(prefix)
     prefix = prefix[prefix_idx]
@@ -144,7 +143,7 @@ def sdeconv_analysis(x, estim_tonic=1):
     err_MSE = analyse.fiterror(data, tonicData + phasicData, 0)
     err_RMSE = np.sqrt(err_MSE)
     err_chi2 = err_RMSE / leda2.data.conductance_error
-    err1d = deverror(phasicDriver, [0, .2])
+    err1d = deverror(phasicDriver, .2)
     err1s = analyse.succnz(phasicDriver, np.maximum(.01, np.max(phasicDriver) / 20), 2, sr)
     phasicDriverNeg = npa(phasicDriver)
     phasicDriverNeg[np.flatnonzero(phasicDriverNeg > 0)] = 0
@@ -174,18 +173,16 @@ def sdeconv_analysis(x, estim_tonic=1):
     leda2.analysis0.error.discreteness = np.hstack((err_discreteness, 0))
     leda2.analysis0.error.negativity = err_negativity
     leda2.analysis0.error.compound = err
-    return (err, newx)
+    return (err, x)
 
 
 def deverror(v, elim):
     if not isinstance(v, np.ndarray):
         raise ValueError('v is not a numpy array')
 
-    err = 0.0
-    err += np.sum(v[np.logical_and(v > elim[0], v < 0)] / elim[0])
-    err += np.sum(v[np.logical_and(v < elim[1], v > 0)] / elim[1])
-    err += np.prod(np.size(np.flatnonzero(np.logical_or(v <= elim[0], v >= elim[1]))))
-    return err / np.prod(np.size(v))
+    idx = np.logical_and(v > 0, v < elim)
+    err = 1 + ( np.sum(v[idx]) / elim - np.sum(idx) ) / len(v)
+    return err
 
 
 def deconv_optimize(x0, nr_iv):

@@ -90,24 +90,23 @@ def succnz(data, crit, fac, sr):
     """
     Original location: analyze/deconvolution/succnz.m
     """
-    nzL = npa([])
-    cntr = 0
     n = len(data)
-    for i in range(n):
-        if abs(data[i]) > crit:
-            cntr = cntr + 1
-        else:
-            if cntr > 0:
-                nzL = np.hstack((nzL, cntr))
-                cntr = 0
-    if cntr > 0:
-        nzL = np.hstack((nzL, cntr))
-    if not len(nzL) == 0:
-        snz = np.sum(pow((nzL / sr), fac)) / (n / sr)
-    else:
-        snz = 0
-    return snz
 
+    abovecrit = np.abs(data) > crit
+    nzidx = np.flatnonzero(np.diff(abovecrit)) + 1
+
+    if len(nzidx) == 0:
+        return 0
+
+    if abovecrit[0] == 1:
+        nzidx = np.hstack((1, nzidx))
+
+    if abovecrit[-1] == 1:
+        nzidx = np.hstack((nzidx, n+1))
+
+    nzL = nzidx[np.arange(1, len(nzidx), 2)] - nzidx[np.arange(0, len(nzidx), 2)]
+
+    return np.sum(pow(nzL / sr, fac) / (n / sr))
 
 def cgd_linesearch(x, error0, direction, error_fcn, h):
     """
@@ -348,7 +347,7 @@ def sdeco_interimpulsefit(driver, kernel, minL, maxL):
             t_idx = np.logical_and(iif_t > groundtime[i] - tonicGridSize, iif_t < t[-1] - 1)
             grid_idx = np.logical_and(t > groundtime[i] - tonicGridSize, t < t[-1] - 1)
         else:
-            t_idx = np.logical_and(iif_t > groundtime[i] - tonicGridSize, iif_t <= groundtime[i] + tonicGridSize / 2)
+            t_idx = np.logical_and(iif_t > groundtime[i] - tonicGridSize / 2, iif_t <= groundtime[i] + tonicGridSize / 2)
             grid_idx = np.logical_and(t > groundtime[i] - tonicGridSize / 2, t <= groundtime[i] + tonicGridSize / 2)
         # Estimate groundlevel at groundtime
         if len(np.flatnonzero(t_idx)) > 2:

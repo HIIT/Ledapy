@@ -58,3 +58,6 @@ docs/_build/
 .swp
 .swo
 *~
+
+# Ide configuration
+.idea
