@@ -2,7 +2,7 @@ import setuptools
 
 setuptools.setup(
     name="ledapy",
-    version="1.1",
+    version="1.2",
     author="Marco Filetti",
     description="Ledapy is a minimal port of Ledalab (www.ledalab.de) for Python",
     url="https://github.com/HIIT/ledapy",

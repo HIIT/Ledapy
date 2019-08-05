@@ -126,7 +126,7 @@ def cgd_linesearch(x, error0, direction, error_fcn, h):
         error_list = np.hstack((error_list, catVal))
 
         if error_list[-1] >= error_list[-2]:  # end of decline
-            if iStep == 2:  # no success
+            if iStep == 1:  # no success
                 step = 0
                 error1 = npa(error0)
                 
