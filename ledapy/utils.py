@@ -229,16 +229,16 @@ def time_idx(time, time0):
     return idx
 
 
-def genTime(seconds, srate):
+def genTime(seconds, length):
     """
     Generate a time vector represeting 'seconds' seconds with the given sample rate (srate).
     Each timepoint of the vector represents time in seconds, starting from 0
     """
-    return np.linspace(0, seconds, seconds * srate)
+    return np.linspace(0, seconds, length)
 
 
 def genTimeVector(conductance, srate):
     """
     Given a conductance vector, return its corresponding time vector representing seconds at each timepoint
     """
-    return genTime(len(conductance) / srate, srate)
+    return genTime(len(conductance) / srate, len(conductance))
